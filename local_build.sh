@@ -37,8 +37,8 @@
 # Find the Closure Compiler.
 if [ -f "$(npm root)/google-closure-compiler/compiler.jar" ]; then
   COMPILER="$(npm root)/google-closure-compiler/compiler.jar"
-elif [ -f closure-compiler*.jar ]; then
-  COMPILER="closure-compiler*.jar"
+elif [ -f google-closure-compiler.jar ]; then
+  COMPILER="google-closure-compiler.jar"
   # TODO: Check whether multiple files were found.
 else
   echo "ERROR: Closure Compiler not found."

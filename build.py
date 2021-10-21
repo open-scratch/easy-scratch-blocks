@@ -3,7 +3,7 @@ if sys.version_info[0] != 2:
   raise Exception("Blockly build only compatible with Python 2.x.\n"
                   "You are using: " + sys.version)
 
-import errno, glob, httplib, json, os, re, subprocess, threading, urllib
+import errno, glob, httplib, json, os, re, subprocess, threading, urllib, shutil
 
 CLOSURE_DIR = os.path.pardir
 CLOSURE_ROOT = os.path.pardir
@@ -181,12 +181,17 @@ class Gen_compressed(threading.Thread):
     # Read in all the source files.
     filenames = calcdeps.CalculateDependencies(search_paths,
       [os.path.join("core", "blockly.js")])
+    
+
+
     filenames.sort()  # Deterministic build.
+    if not os.path.exists('goog'):
+      shutil.copytree('node_modules\\google-closure-library\\closure\\goog','goog')
     for filename in filenames:
+      filename = filename.replace("node_modules\\google-closure-library\\closure\\","")
       # Append filenames as false arguments the step before compiling will
       # either transform them into arguments for local or remote compilation
       params.append(("js_file", filename))
-
     self.do_compile(params, target_filename, filenames, "")
 
   def gen_blocks(self, block_type):
@@ -237,7 +242,7 @@ class Gen_compressed(threading.Thread):
     args = []
     for group in [["java -jar google-closure-compiler.jar"], dash_params]:
       args.extend(group)
-    # print args
+    print " ".join(args)
     if sys.platform == "darwin":
       proc = subprocess.Popen(" ".join(args), stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     else:
